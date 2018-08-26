@@ -22,7 +22,6 @@
 		E8E2AB85212E1187000435E2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E8E2AB83212E1187000435E2 /* LaunchScreen.storyboard */; };
 		E8E2AB90212E1187000435E2 /* WeatherDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E2AB8F212E1187000435E2 /* WeatherDemoTests.swift */; };
 		E8E2AB9B212E1187000435E2 /* WeatherDemoUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E2AB9A212E1187000435E2 /* WeatherDemoUITests.swift */; };
-		E8E2ABA9212E1D19000435E2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E2ABA8212E1D19000435E2 /* ViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,7 +63,6 @@
 		E8E2AB96212E1187000435E2 /* WeatherDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WeatherDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E8E2AB9A212E1187000435E2 /* WeatherDemoUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDemoUITests.swift; sourceTree = "<group>"; };
 		E8E2AB9C212E1187000435E2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E8E2ABA8212E1D19000435E2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,7 +130,6 @@
 				E8E2AB83212E1187000435E2 /* LaunchScreen.storyboard */,
 				E8E2AB86212E1187000435E2 /* Info.plist */,
 				E8E2AB7E212E1185000435E2 /* WeatherDemo.xcdatamodeld */,
-				E8E2ABA8212E1D19000435E2 /* ViewController.swift */,
 				E81ECE68213190690094A46C /* DecodeOperation.swift */,
 				E81ECE6A2131971E0094A46C /* NetworkManager.swift */,
 				E81ECE6C213198250094A46C /* URLConfigurator.swift */,
@@ -295,7 +292,6 @@
 				E8E2AB7A212E1185000435E2 /* WeatherViewController.swift in Sources */,
 				E81ECE6F2131A7000094A46C /* UIViewControllerAlerts.swift in Sources */,
 				E81ECE75213210480094A46C /* CacheManager.swift in Sources */,
-				E8E2ABA9212E1D19000435E2 /* ViewController.swift in Sources */,
 				E81ECE6B2131971E0094A46C /* NetworkManager.swift in Sources */,
 				E81ECE6D213198250094A46C /* URLConfigurator.swift in Sources */,
 				E81ECE732131CE600094A46C /* WeatherInfo.swift in Sources */,

@@ -32,5 +32,26 @@ class WeatherDemoTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-    
+    func testCacheManagerSavesDataToDirectory() {
+        let directory = "Test"
+        let expectation = XCTestExpectation(description: "File saved successfully")
+        
+        if let data = "Test data!".data(using: .utf8) {
+            
+            CacheManager().saveToCache(data, directory: directory) { (success, path) in
+                if success == true {
+                    
+                    // Check file exists at directory
+                    
+                    if FileManager.default.fileExists(atPath: path) {
+                        // Pass the test
+                        expectation.fulfill()
+                    }
+                }
+            }
+        }
+        
+        wait(for: [expectation], timeout: 5)
+        
+    }
 }

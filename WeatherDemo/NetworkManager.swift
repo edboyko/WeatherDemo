@@ -26,7 +26,14 @@ class NetworkManager {
             if let error = error as NSError?
             {
                 if error.code == NSURLErrorTimedOut || error.code == NSURLErrorNotConnectedToInternet {
-                    weatherData = CacheManager().weatherDataFromCache()
+                    
+                    if let cachedData = CacheManager().cachedDataInDirectory(CacheManager.weatherCacheDirectory) {
+                        weatherData = cachedData
+                    }
+                    else {
+                        errorDescription = error.localizedDescription
+                    }
+                    
                 }
                 else {
                     errorDescription = error.localizedDescription
@@ -55,8 +62,7 @@ class NetworkManager {
             }
             if let weatherData = weatherData {
                 // Save data to cache
-                
-                CacheManager().saveToCashe(weatherData)
+                CacheManager().saveToCache(weatherData, directory: CacheManager.weatherCacheDirectory)
                 
                 // Decode data
                 let decodeOperation = DecodeOperation<WeatherResponseModel>(data: weatherData, completion: { (decodedResult, error) in
@@ -86,7 +92,6 @@ class NetworkManager {
             }
         }
         task.resume()
-        
     }
     
     private func decodeData(data: Data) {

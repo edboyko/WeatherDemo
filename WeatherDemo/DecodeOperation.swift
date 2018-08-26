@@ -24,6 +24,8 @@ class DecodeOperation<T>: Operation where T: Decodable {
         var result: T?
         var decodingError: Error?
         
+        self.completionBlock = nil
+        
         self.completionBlock = { [weak self] () in
             self?.completion(result, decodingError)
         }
