@@ -17,15 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
 
-        let formatter = MeasurementFormatter()
-        let measurement = Measurement(value: 14.51, unit: UnitTemperature.celsius)
-        formatter.numberFormatter.maximumFractionDigits = 0
-        formatter.unitOptions = .providedUnit
-        
-        let string = formatter.string(from: measurement)
-        
         return true
     }
 
@@ -99,4 +91,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 }
-
+extension UITableView {
+    func reloadFirstSection() {
+        
+        self.reloadSections(IndexSet(integer: 0), with: .fade)
+    }
+}

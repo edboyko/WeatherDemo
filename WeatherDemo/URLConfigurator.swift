@@ -28,7 +28,7 @@ class URLConfigurator: NSObject {
 
     private let baseAddress = "https://api.openweathermap.org/data/2.5/weather"
     
-    private let apiKey = <#Insert API Key#>
+    private let apiKey = "<#Insert API Key#>"
     
     func createWeatherURL(location: CLLocation, units: Units? = nil) -> URL? {
         guard var urlComponents = URLComponents(string: baseAddress) else {

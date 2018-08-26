@@ -23,8 +23,8 @@ struct WeatherResponseModel: Decodable {
     var wind: Wind
     
     struct Wind: Decodable {
-        var speed: Float
-        var deg: Int
+        var speed: Double
+        var deg: Double
     }
     struct Coord: Decodable {
         var lon: Double

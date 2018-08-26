@@ -10,7 +10,7 @@ import CoreLocation
 
 class NetworkManager {
     
-    func fetchWeatherData(for location: CLLocation, completion: @escaping ((WeatherResponseModel?, String?) -> Void)) {
+    func fetchWeatherData(for location: CLLocation, completion: @escaping ((WeatherInfo?, String?) -> Void)) {
         
         guard let url = URLConfigurator().createWeatherURL(location: location, units: .metric) else {
             return
@@ -21,9 +21,16 @@ class NetworkManager {
         let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
             
             var errorDescription: String? = nil
+            var weatherData: Data?
             
-            if let error = error {
-                errorDescription = error.localizedDescription
+            if let error = error as NSError?
+            {
+                if error.code == NSURLErrorTimedOut || error.code == NSURLErrorNotConnectedToInternet {
+                    weatherData = CacheManager().weatherDataFromCache()
+                }
+                else {
+                    errorDescription = error.localizedDescription
+                }
             }
             else {
                 if let httpResponse = response as? HTTPURLResponse {
@@ -31,20 +38,12 @@ class NetworkManager {
                         
                         if let data = data {
                             
-                            print("data acquired")
-                            
-                            let decodeOperation = DecodeOperation<WeatherResponseModel>(data: data)
-                            decodeOperation.completionBlock = { [weak decodeOperation] () in
-                                completion(decodeOperation?.decodedResult, decodeOperation?.error?.localizedDescription)
-                            }
-                            
-                            OperationQueue().addOperation(decodeOperation)
+                            weatherData = data
                             
                         }
                         else {
                             errorDescription = "Failed to fetch data"
                         }
-                        
                     }
                     else {
                         errorDescription = String(format: "Error %@", NSNumber(value: httpResponse.statusCode))
@@ -54,8 +53,36 @@ class NetworkManager {
                     errorDescription = "Response Error"
                 }
             }
-            if let errorDescription = errorDescription {
-                completion(nil, errorDescription)
+            if let weatherData = weatherData {
+                // Save data to cache
+                
+                CacheManager().saveToCashe(weatherData)
+                
+                // Decode data
+                let decodeOperation = DecodeOperation<WeatherResponseModel>(data: weatherData, completion: { (decodedResult, error) in
+                    
+                    if let weatherData = decodedResult {
+                        
+                        let weatherInfo = WeatherInfo(weatherData: weatherData)
+                        completion(weatherInfo, nil)
+                    }
+                    else {
+                        completion(nil, error?.localizedDescription)
+                    }
+                    
+                })
+                
+                OperationQueue().addOperation(decodeOperation)
+            }
+            else {
+                let errorInfo: String
+                if let errorDescription = errorDescription {
+                    errorInfo = errorDescription
+                }
+                else {
+                    errorInfo = "Failed to aquire weather data"
+                }
+                completion(nil, errorInfo)
             }
         }
         task.resume()

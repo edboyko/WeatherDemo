@@ -22,25 +22,47 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.tableView.refreshControl = UIRefreshControl()
-        self.tableView.refreshControl?.addTarget(self, action: #selector(refreshData), for: .valueChanged)
+        setupRefreshControl()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        self.tableView.refreshControl?.beginRefreshing()
         fetchWeatherData()
     }
-
     
-    func fetchWeatherData() {
+    func setupRefreshControl() {
+        
+        self.tableView.refreshControl = UIRefreshControl()
+        self.tableView.refreshControl?.addTarget(self, action: #selector(fetchWeatherData), for: .valueChanged)
+    }
+    
+    func displayData(from weatherInfo: WeatherInfo) {
+        
+        locationCell.detailTextLabel?.text = weatherInfo.locationName
+        conditionCell.detailTextLabel?.text = weatherInfo.conditions
+        temperatureCell.detailTextLabel?.text = weatherInfo.airTemperature
+        windSpeedCell.detailTextLabel?.text = weatherInfo.windSpeed
+        windDirectionCell.detailTextLabel?.text = weatherInfo.windDirection
+        
+        if let refreshControl = self.tableView.refreshControl {
+            if refreshControl.isRefreshing {
+                refreshControl.endRefreshing()
+            }
+        }
+        
+        tableView.reloadData()
+    }
+    
+    @objc func fetchWeatherData() {
         
         let locationManager = CLLocationManager()
         guard let location = locationManager.location else {
             return
         }
         
-        NetworkManager().fetchWeatherData(for: location) { (weatherResponse, errorDescription) in
+        NetworkManager().fetchWeatherData(for: location) { (weatherInfo, errorDescription) in
             
             DispatchQueue.main.async { [weak self] in
                 if let errorDescription = errorDescription {
@@ -50,28 +72,12 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate {
                     
                     self?.present(errorAlert, animated: true, completion: nil)
                 }
-                else if let weatherResponse = weatherResponse {
-                    self?.displayData(from: weatherResponse)
+                else if let weatherInfo = weatherInfo {
+                    self?.displayData(from: weatherInfo)
                 }
                 
             }
         }
     }
-    
-    func displayData(from weatherInfo: WeatherResponseModel) {
-        
-        locationCell.detailTextLabel?.text = weatherInfo.name
-        conditionCell.detailTextLabel?.text = weatherInfo.weather.first?.main
-        
-        
-        temperatureCell.detailTextLabel?.text = "\(weatherInfo.main.temp)"
-        windSpeedCell.detailTextLabel?.text = "\(weatherInfo.wind.speed)"
-        windDirectionCell.detailTextLabel?.text = "\(weatherInfo.wind.deg)"
-    }
-    
-    @objc func refreshData() {
-        self.tableView.refreshControl?.endRefreshing()
-    }
-
 }
 

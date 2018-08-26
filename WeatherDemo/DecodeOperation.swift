@@ -12,24 +12,31 @@ class DecodeOperation<T>: Operation where T: Decodable {
 
     private var data: Data
     
-    var error: Error?
+    private var completion: ((T?, Error?) -> Void)
     
-    var decodedResult: T?
-    
-    init(data: Data) {
+    init(data: Data, completion: @escaping ((T?, Error?) -> Void)) {
         self.data = data
+        self.completion = completion
     }
     
     override func main() {
+        
+        var result: T?
+        var decodingError: Error?
+        
+        self.completionBlock = { [weak self] () in
+            self?.completion(result, decodingError)
+        }
+        
         let decoder = JSONDecoder()
         
         do {
             let response = try decoder.decode(T.self, from: data)
-            self.decodedResult = response
+            result = response
         }
         catch {
             print("Decoding error:", error.localizedDescription)
-            self.error = error
+            decodingError = error
         }
     }
     
