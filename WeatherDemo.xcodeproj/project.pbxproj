@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E80324CF213313D40062D551 /* WeatherTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E80324CE213313D40062D551 /* WeatherTableViewDataSource.swift */; };
 		E81ECE63213186570094A46C /* WeatherResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E81ECE62213186570094A46C /* WeatherResponseModel.swift */; };
 		E81ECE69213190690094A46C /* DecodeOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = E81ECE68213190690094A46C /* DecodeOperation.swift */; };
 		E81ECE6B2131971E0094A46C /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E81ECE6A2131971E0094A46C /* NetworkManager.swift */; };
@@ -42,6 +43,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E80324CE213313D40062D551 /* WeatherTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherTableViewDataSource.swift; sourceTree = "<group>"; };
 		E81ECE62213186570094A46C /* WeatherResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherResponseModel.swift; sourceTree = "<group>"; };
 		E81ECE68213190690094A46C /* DecodeOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodeOperation.swift; sourceTree = "<group>"; };
 		E81ECE6A2131971E0094A46C /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				E81ECE6C213198250094A46C /* URLConfigurator.swift */,
 				E81ECE6E2131A7000094A46C /* UIViewControllerAlerts.swift */,
 				E81ECE74213210480094A46C /* CacheManager.swift */,
+				E80324CE213313D40062D551 /* WeatherTableViewDataSource.swift */,
 			);
 			path = WeatherDemo;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 			files = (
 				E8E2AB80212E1185000435E2 /* WeatherDemo.xcdatamodeld in Sources */,
 				E8E2AB7A212E1185000435E2 /* WeatherViewController.swift in Sources */,
+				E80324CF213313D40062D551 /* WeatherTableViewDataSource.swift in Sources */,
 				E81ECE6F2131A7000094A46C /* UIViewControllerAlerts.swift in Sources */,
 				E81ECE75213210480094A46C /* CacheManager.swift in Sources */,
 				E81ECE6B2131971E0094A46C /* NetworkManager.swift in Sources */,

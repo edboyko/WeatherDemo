@@ -10,6 +10,7 @@ import Foundation
 
 struct WeatherResponseModel: Decodable {
     var name: String
+    var dt: Double
     struct Main: Decodable {
         var temp: Double
     }

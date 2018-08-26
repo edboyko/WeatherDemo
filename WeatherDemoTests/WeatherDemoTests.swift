@@ -54,4 +54,33 @@ class WeatherDemoTests: XCTestCase {
         wait(for: [expectation], timeout: 5)
         
     }
+    
+    func testCacheIsDeletedProperly() {
+        let directory = "DeleteTest"
+        let expectation = XCTestExpectation(description: "File existed and now deleted")
+        
+        if let data = "DeleteTest data!".data(using: .utf8) {
+            
+            CacheManager().saveToCache(data, directory: directory) { (success, path) in
+                if success == true {
+                    
+                    // Check file exists at directory
+                    if FileManager.default.fileExists(atPath: path) {
+                        
+                        // Delete file
+                        CacheManager().deleteCache(from: directory, successBlock: { (success) in
+                            
+                            // Check file does not exist at directory
+                            if !FileManager.default.fileExists(atPath: path) {
+                                expectation.fulfill()
+                            }
+                            else {
+                                XCTFail("File still exists")
+                            }
+                        })
+                    }
+                }
+            }
+        }
+    }
 }

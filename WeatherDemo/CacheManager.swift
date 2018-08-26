@@ -14,7 +14,7 @@ class CacheManager {
     
     private static let cachesFolder = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
     
-    private static let cacheExpirationDateKey = "LastSavingCacheDate"
+    private static let cacheExpirationDateKey = "CacheExpirationDateKey"
     
     private static let defaultDataValidityTime: TimeInterval = TimeInterval(24 * 60 * 60)
     
@@ -36,7 +36,7 @@ class CacheManager {
     }
     
     private func expirationDateValid(_ date: Date) -> Bool {
-        return date.timeIntervalSinceNow > Date().addingTimeInterval(60 * 29 + 59).timeIntervalSinceNow
+        return date.timeIntervalSinceNow >= Date().addingTimeInterval(1800).timeIntervalSinceNow
     }
     
     // MARK: - Operations with cache
@@ -44,14 +44,14 @@ class CacheManager {
     /// - Parameters:
     ///   - data: Data you want to cache
     ///   - directory: A folder with this name will be created in the default caches directory
-    ///   - expirationDate: Date when cache will become invalid. Default value is 24 hours from the moment of cache saving. Must be at least 30 minutes in future
+    ///   - validityTime: Time Inteval in which data will be valid. Default value is 24 hours. Must be at least 1800 seconds
     ///   - successBlock: Closure that will be executed when finished. Default value is nil. Bool parameter determines whether saving was successful, String parameter stores path for the file
     func saveToCache(_ data: Data,
                      directory: String,
-                     expirationDate: Date = Date().addingTimeInterval(CacheManager.defaultDataValidityTime),
+                     validityTime: TimeInterval = CacheManager.defaultDataValidityTime,
                      successBlock: ((Bool, String) -> Void)? = nil) {
-        
-        assert(expirationDateValid(expirationDate), "Expiration date must be at least 30 minutes in future")
+        let expirationDate = Date().addingTimeInterval(validityTime)
+        assert(expirationDateValid(expirationDate), "Cache must be valid for at least 30 minutes")
         var errorMessage: String? = nil
         let dataURL = URL(fileURLWithPath: CacheManager.cachesFolder).appendingPathComponent(directory)
         let operaion = BlockOperation {
@@ -75,7 +75,7 @@ class CacheManager {
             else {
                 success = true
                 print("Cached successfully")
-                UserDefaults.standard.set(expirationDate, forKey: CacheManager.cacheExpirationDateKey)
+                UserDefaults.standard.set(expirationDate, forKey: CacheManager.cacheExpirationDateKeyForDirectory(directory))
             }
             successBlock?(success, dataURL.path)
         }
@@ -101,12 +101,16 @@ class CacheManager {
             }
             else {
                 deleteCache(from: directory)
+                print("Cached data is no longer valid")
             }
         }
 
         return nil
     }
     
+    /// - Parameters:
+    ///   - directory: A folder in the default caches directory that needs to be cleared
+    ///   - successBlock: Closure that will be executed when finished. Default value is nil. Bool parameter determines whether saving was successful
     func deleteCache(from directory: String, successBlock: ((Bool) -> Void)? = nil) {
         
         var errorMessage: String? = nil

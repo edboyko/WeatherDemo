@@ -16,6 +16,8 @@ struct WeatherInfo {
     private var airTemperatureValue: Double
     var locationName: String
     
+    var dateUpdated: Date
+    
     init(weatherData: WeatherResponseModel) {
         locationName = weatherData.name
         windSpeedValue = weatherData.wind.speed
@@ -24,6 +26,7 @@ struct WeatherInfo {
             conditions = weatherConditions
         }
         airTemperatureValue = weatherData.main.temp
+        dateUpdated = Date(timeIntervalSince1970: weatherData.dt)
     }
     
     var windSpeed: String {
@@ -57,6 +60,14 @@ struct WeatherInfo {
         
         let i = (windDegreesValue + 22.5)/45;
         return directions[Int(i) % directions.count];
+    }
+    
+    var lastUpdatedString: String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        
+        return String(format: "Last updated: %@", formatter.string(from: dateUpdated))  
     }
     
     

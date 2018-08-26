@@ -9,18 +9,21 @@
 import UIKit
 import CoreLocation
 
-class WeatherViewController: UITableViewController, CLLocationManagerDelegate {
+class WeatherViewController: UIViewController {
+    // MARK: - IBOutlets
+    @IBOutlet weak var tableView: UITableView!
     
-    @IBOutlet weak var locationCell: UITableViewCell!
-    @IBOutlet weak var conditionCell: UITableViewCell!
-    @IBOutlet weak var temperatureCell: UITableViewCell!
-    @IBOutlet weak var windSpeedCell: UITableViewCell!
-    @IBOutlet weak var windDirectionCell: UITableViewCell!
-    
+    // MARK: - Properties
     var currentLocation: CLLocation?
+    var locationManager = CLLocationManager()
     
+    var tableViewDataSource: WeatherTableViewDataSource?
+    
+    // MARK: - Lifecycle methods
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        locationManager.delegate = self
         
         setupRefreshControl()
     }
@@ -28,8 +31,86 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        locationManager.requestWhenInUseAuthorization()
+    }
+    
+    
+    // MARK: - Fetching data actions
+    
+    @IBAction func refreshDataAction(_ sender: Any) {
+        locationManager.startUpdatingLocation()
+    }
+    
+    func refreshData() {
         self.tableView.refreshControl?.beginRefreshing()
         fetchWeatherData()
+    }
+    
+    @objc func fetchWeatherData() {
+        
+        guard let location = currentLocation else {
+            hideRefreshControl()
+            return
+        }
+        
+        NetworkManager().fetchWeatherData(for: location) { (weatherInfo, errorDescription) in
+            
+            // Access main thread to edit UI
+            DispatchQueue.main.async { [weak self] in
+                
+                if let errorDescription = errorDescription {
+                    if let weatherInfo = weatherInfo {
+                        if let _ = self?.tableViewDataSource {
+                            self?.showErrorAlert(errorText: errorDescription)
+                        }
+                        else {
+                            self?.hideRefreshControl()
+                            self?.displayData(from: weatherInfo, lastDateUpdated: weatherInfo.lastUpdatedString)
+                        }
+                    }
+                    else {
+                        self?.showErrorAlert(errorText: "No data available.", errorDescription: errorDescription)
+                    }
+                }
+                else {
+                    if let weatherInfo = weatherInfo {
+                        self?.hideRefreshControl()
+                        self?.displayData(from: weatherInfo, lastDateUpdated: weatherInfo.lastUpdatedString)
+                    }
+                }
+            }
+        }
+    }
+    // MARK: - UI Manipulations
+    
+    func displayData(from weatherInfo: WeatherInfo, lastDateUpdated: String? = nil, messageForDisplay: String? = nil) {
+        
+        tableViewDataSource = WeatherTableViewDataSource(weatherInfo: weatherInfo)
+        
+        tableViewDataSource?.headerContent = messageForDisplay
+        tableViewDataSource?.footerContent = lastDateUpdated
+        
+        tableView.dataSource = tableViewDataSource
+        
+        tableView.reloadData()
+    }
+    
+    func hideRefreshControl() {
+        
+        if let refreshControl = self.tableView.refreshControl {
+            if refreshControl.isRefreshing {
+                refreshControl.endRefreshing()
+            }
+        }
+    }
+    
+    func showErrorAlert(errorText: String, errorDescription: String? = nil) {
+        let errorAlert = self.alert(title: errorText, message: errorDescription)
+        
+        self.present(errorAlert, animated: true) { [weak self] () in
+            
+            self?.hideRefreshControl()
+        }
     }
     
     func setupRefreshControl() {
@@ -37,49 +118,28 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate {
         self.tableView.refreshControl = UIRefreshControl()
         self.tableView.refreshControl?.addTarget(self, action: #selector(fetchWeatherData), for: .valueChanged)
     }
-    
-    func displayData(from weatherInfo: WeatherInfo) {
-        
-        locationCell.detailTextLabel?.text = weatherInfo.locationName
-        conditionCell.detailTextLabel?.text = weatherInfo.conditions
-        temperatureCell.detailTextLabel?.text = weatherInfo.airTemperature
-        windSpeedCell.detailTextLabel?.text = weatherInfo.windSpeed
-        windDirectionCell.detailTextLabel?.text = weatherInfo.windDirection
-        
-        tableView.reloadData()
-    }
-    
-    @objc func fetchWeatherData() {
-        
-        let locationManager = CLLocationManager()
-        guard let location = locationManager.location else {
-            return
+}
+
+extension WeatherViewController: CLLocationManagerDelegate {
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        if status == .authorizedWhenInUse {
+            locationManager.startUpdatingLocation()
         }
-        
-        NetworkManager().fetchWeatherData(for: location) { (weatherInfo, errorDescription) in
-            
+        else {
             DispatchQueue.main.async { [weak self] in
-                
-                if let refreshControl = self?.tableView.refreshControl {
-                    if refreshControl.isRefreshing {
-                        refreshControl.endRefreshing()
-                    }
-                }
-                
-                if let errorDescription = errorDescription {
-                    self?.showErrorAlert(errorText: errorDescription)
-                }
-                else if let weatherInfo = weatherInfo {
-                    self?.displayData(from: weatherInfo)
-                }
+                self?.showErrorAlert(errorText: "No location available to fetch weather data.")
             }
         }
     }
     
-    func showErrorAlert(errorText: String) {
-        let errorAlert = self.alert(title: errorText)
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        self.present(errorAlert, animated: true, completion: nil)
+        currentLocation = locations.first
+        
+        print("Current Location: ", currentLocation?.description ?? "N/A")
+        
+        manager.stopUpdatingLocation()
+        refreshData()
+        
     }
 }
-

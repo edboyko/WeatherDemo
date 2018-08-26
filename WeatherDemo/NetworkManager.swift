@@ -30,9 +30,7 @@ class NetworkManager {
                     if let cachedData = CacheManager().cachedDataInDirectory(CacheManager.weatherCacheDirectory) {
                         weatherData = cachedData
                     }
-                    else {
-                        errorDescription = error.localizedDescription
-                    }
+                    errorDescription = error.localizedDescription
                     
                 }
                 else {
@@ -46,6 +44,9 @@ class NetworkManager {
                         if let data = data {
                             
                             weatherData = data
+                            
+                            // Save data to cache
+                            CacheManager().saveToCache(data, directory: CacheManager.weatherCacheDirectory)
                             
                         }
                         else {
@@ -61,8 +62,6 @@ class NetworkManager {
                 }
             }
             if let weatherData = weatherData {
-                // Save data to cache
-                CacheManager().saveToCache(weatherData, directory: CacheManager.weatherCacheDirectory)
                 
                 // Decode data
                 let decodeOperation = DecodeOperation<WeatherResponseModel>(data: weatherData, completion: { (decodedResult, error) in
@@ -70,7 +69,7 @@ class NetworkManager {
                     if let weatherData = decodedResult {
                         
                         let weatherInfo = WeatherInfo(weatherData: weatherData)
-                        completion(weatherInfo, nil)
+                        completion(weatherInfo, errorDescription)
                     }
                     else {
                         completion(nil, error?.localizedDescription)
