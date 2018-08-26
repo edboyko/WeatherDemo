@@ -46,12 +46,6 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate {
         windSpeedCell.detailTextLabel?.text = weatherInfo.windSpeed
         windDirectionCell.detailTextLabel?.text = weatherInfo.windDirection
         
-        if let refreshControl = self.tableView.refreshControl {
-            if refreshControl.isRefreshing {
-                refreshControl.endRefreshing()
-            }
-        }
-        
         tableView.reloadData()
     }
     
@@ -65,19 +59,27 @@ class WeatherViewController: UITableViewController, CLLocationManagerDelegate {
         NetworkManager().fetchWeatherData(for: location) { (weatherInfo, errorDescription) in
             
             DispatchQueue.main.async { [weak self] in
-                if let errorDescription = errorDescription {
-                    guard let errorAlert = self?.alert(title: errorDescription) else {
-                        return
+                
+                if let refreshControl = self?.tableView.refreshControl {
+                    if refreshControl.isRefreshing {
+                        refreshControl.endRefreshing()
                     }
-                    
-                    self?.present(errorAlert, animated: true, completion: nil)
+                }
+                
+                if let errorDescription = errorDescription {
+                    self?.showErrorAlert(errorText: errorDescription)
                 }
                 else if let weatherInfo = weatherInfo {
                     self?.displayData(from: weatherInfo)
                 }
-                
             }
         }
+    }
+    
+    func showErrorAlert(errorText: String) {
+        let errorAlert = self.alert(title: errorText)
+        
+        self.present(errorAlert, animated: true, completion: nil)
     }
 }
 
