@@ -28,8 +28,12 @@ class URLConfigurator: NSObject {
 
     private let baseAPIAddress = "https://api.openweathermap.org/data/2.5/weather"
     
+    // Open Weather Map API key
     private let apiKey = "<#Insert API Key#>"
     
+    /// - Parameters:
+    ///   - location: Determines which location should be used for fetching weather data
+    ///   - units: Determines in which units data should be provided
     func createWeatherURL(location: CLLocation, units: Units? = nil) -> URL? {
         guard var urlComponents = URLComponents(string: baseAPIAddress) else {
             return nil
