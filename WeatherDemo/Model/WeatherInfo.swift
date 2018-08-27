@@ -16,7 +16,9 @@ struct WeatherInfo {
     private var airTemperatureValue: Double
     var locationName: String
     
-    var dateUpdated: Date
+    var dateUpdated: Date? {
+        return CacheManager.lastDateCacheSavingForDirectory(CacheManager.weatherCacheDirectory)
+    }
     
     init(weatherData: WeatherResponseModel) {
         locationName = weatherData.name
@@ -26,7 +28,6 @@ struct WeatherInfo {
             conditions = weatherConditions
         }
         airTemperatureValue = weatherData.main.temp
-        dateUpdated = Date(timeIntervalSince1970: weatherData.dt)
     }
     
     var windSpeed: String {
@@ -62,12 +63,15 @@ struct WeatherInfo {
         return directions[Int(i) % directions.count];
     }
     
-    var lastUpdatedString: String {
+    var lastUpdatedString: String? {
+        guard let lastUpdated = dateUpdated else {
+            return nil
+        }
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
         formatter.timeStyle = .short
         
-        return String(format: "Last updated: %@", formatter.string(from: dateUpdated))  
+        return String(format: "Last updated: %@", formatter.string(from: lastUpdated))  
     }
     
     

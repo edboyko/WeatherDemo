@@ -69,6 +69,7 @@ class NetworkManager {
                     if let weatherData = decodedResult {
                         
                         let weatherInfo = WeatherInfo(weatherData: weatherData)
+                        
                         completion(weatherInfo, errorDescription)
                     }
                     else {

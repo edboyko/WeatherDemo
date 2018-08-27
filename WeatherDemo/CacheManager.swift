@@ -15,11 +15,22 @@ class CacheManager {
     private static let cachesFolder = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
     
     private static let cacheExpirationDateKey = "CacheExpirationDateKey"
+    private static let lastDateCacheSavingKey = "LastDateCacheSavingKey"
     
     private static let defaultDataValidityTime: TimeInterval = TimeInterval(24 * 60 * 60)
     
     private static func cacheExpirationDateKeyForDirectory(_ directory: String) -> String {
         return String(format: "%@_%@", CacheManager.cacheExpirationDateKey, directory)
+    }
+    
+    private static func lastDateCacheSavingKeyForDirectory(_ directory: String) -> String {
+        return String(format: "%@_%@", CacheManager.lastDateCacheSavingKey, directory)
+    }
+    
+    static func lastDateCacheSavingForDirectory(_ directory: String) -> Date? {
+        
+        let key = CacheManager.lastDateCacheSavingKeyForDirectory(directory)
+        return UserDefaults.standard.object(forKey: key) as? Date
     }
     
     private static func cacheExpirationDateForDirectory(_ directory: String) -> Date? {
@@ -50,8 +61,10 @@ class CacheManager {
                      directory: String,
                      validityTime: TimeInterval = CacheManager.defaultDataValidityTime,
                      successBlock: ((Bool, String) -> Void)? = nil) {
+        
         let expirationDate = Date().addingTimeInterval(validityTime)
         assert(expirationDateValid(expirationDate), "Cache must be valid for at least 30 minutes")
+        
         var errorMessage: String? = nil
         let dataURL = URL(fileURLWithPath: CacheManager.cachesFolder).appendingPathComponent(directory)
         let operaion = BlockOperation {
@@ -76,6 +89,8 @@ class CacheManager {
                 success = true
                 print("Cached successfully")
                 UserDefaults.standard.set(expirationDate, forKey: CacheManager.cacheExpirationDateKeyForDirectory(directory))
+                
+                UserDefaults.standard.set(Date(), forKey: CacheManager.lastDateCacheSavingKeyForDirectory(directory))
             }
             successBlock?(success, dataURL.path)
         }
