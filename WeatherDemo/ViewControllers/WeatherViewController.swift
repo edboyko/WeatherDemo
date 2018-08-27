@@ -12,6 +12,7 @@ import CoreLocation
 class WeatherViewController: UIViewController {
     // MARK: - IBOutlets
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var weatherImageView: UIImageView!
     
     // MARK: - Properties
     var currentLocation: CLLocation?
@@ -93,6 +94,21 @@ class WeatherViewController: UIViewController {
         tableView.dataSource = tableViewDataSource
         
         tableView.reloadData()
+        
+        if let weatherURL = weatherInfo.imageURL {
+            
+            NetworkManager().downloadImage(imageURL: weatherURL) { [weak self] (image, errorDesc) in
+                DispatchQueue.main.async {
+                    if let error = errorDesc {
+                        print(error)
+                    }
+                    if let weatherImage = image {
+                        self?.weatherImageView.image = weatherImage
+                    }
+                }
+            }
+        }
+        
     }
     
     func hideRefreshControl() {

@@ -6,11 +6,12 @@
 //  Copyright © 2018 Edwin Boyko. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class CacheManager {
     
     static let weatherCacheDirectory = "weather"
+    static let weatherImageCacheKey: NSString = "WeatherImage"
     
     private static let cachesFolder = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0]
     
@@ -164,6 +165,17 @@ class CacheManager {
         }
         
         OperationQueue().addOperation(operaion)
+    }
+    
+    func cacheImage(_ image: UIImage, identifier: NSString) {
+        
+        let imageCache = NSCache<NSString, UIImage>()
+        imageCache.setObject(image, forKey: identifier)
+    }
+    
+    func cachedImage(for identifier: NSString) -> UIImage? {
+        let imageCache = NSCache<NSString, UIImage>()
+        return imageCache.object(forKey: identifier)
     }
     
 }

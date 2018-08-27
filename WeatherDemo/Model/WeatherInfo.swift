@@ -15,6 +15,7 @@ struct WeatherInfo {
     var conditions: String = "N/A"
     private var airTemperatureValue: Double
     var locationName: String
+    var imageURL: URL?
     
     var dateUpdated: Date? {
         return CacheManager.lastDateCacheSavingForDirectory(CacheManager.weatherCacheDirectory)
@@ -24,9 +25,11 @@ struct WeatherInfo {
         locationName = weatherData.name
         windSpeedValue = weatherData.wind.speed
         windDegreesValue = weatherData.wind.deg
-        if let weatherConditions = weatherData.weather.first?.main {
-            conditions = weatherConditions
+        if let weather = weatherData.weather.first {
+            conditions = weather.main
+            imageURL = URLConfigurator().createWeatherImageURL(imageName: weather.icon)
         }
+        
         airTemperatureValue = weatherData.main.temp
     }
     

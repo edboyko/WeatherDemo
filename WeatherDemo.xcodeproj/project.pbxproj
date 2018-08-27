@@ -97,8 +97,18 @@
 			children = (
 				E81ECE62213186570094A46C /* WeatherResponseModel.swift */,
 				E81ECE722131CE600094A46C /* WeatherInfo.swift */,
+				E8E2AB7E212E1185000435E2 /* WeatherDemo.xcdatamodeld */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		E8B478AA21345ADF00DEEACE /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				E8E2AB79212E1185000435E2 /* WeatherViewController.swift */,
+				E81ECE6E2131A7000094A46C /* UIViewControllerAlerts.swift */,
+			);
+			path = ViewControllers;
 			sourceTree = "<group>";
 		};
 		E8E2AB6B212E1185000435E2 = {
@@ -125,17 +135,15 @@
 			isa = PBXGroup;
 			children = (
 				E81ECE602131861B0094A46C /* Model */,
+				E8B478AA21345ADF00DEEACE /* ViewControllers */,
 				E8E2AB77212E1185000435E2 /* AppDelegate.swift */,
-				E8E2AB79212E1185000435E2 /* WeatherViewController.swift */,
 				E8E2AB7B212E1185000435E2 /* Main.storyboard */,
 				E8E2AB81212E1187000435E2 /* Assets.xcassets */,
 				E8E2AB83212E1187000435E2 /* LaunchScreen.storyboard */,
 				E8E2AB86212E1187000435E2 /* Info.plist */,
-				E8E2AB7E212E1185000435E2 /* WeatherDemo.xcdatamodeld */,
 				E81ECE68213190690094A46C /* DecodeOperation.swift */,
 				E81ECE6A2131971E0094A46C /* NetworkManager.swift */,
 				E81ECE6C213198250094A46C /* URLConfigurator.swift */,
-				E81ECE6E2131A7000094A46C /* UIViewControllerAlerts.swift */,
 				E81ECE74213210480094A46C /* CacheManager.swift */,
 				E80324CE213313D40062D551 /* WeatherTableViewDataSource.swift */,
 			);

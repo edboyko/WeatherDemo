@@ -19,6 +19,7 @@ struct WeatherResponseModel: Decodable {
     var weather: [Weather]
     struct Weather: Decodable {
         var main: String
+        var icon: String
     }
     
     var wind: Wind

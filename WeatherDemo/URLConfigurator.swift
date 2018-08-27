@@ -26,12 +26,12 @@ enum Units: String {
 }
 class URLConfigurator: NSObject {
 
-    private let baseAddress = "https://api.openweathermap.org/data/2.5/weather"
+    private let baseAPIAddress = "https://api.openweathermap.org/data/2.5/weather"
     
     private let apiKey = "<#Insert API Key#>"
     
     func createWeatherURL(location: CLLocation, units: Units? = nil) -> URL? {
-        guard var urlComponents = URLComponents(string: baseAddress) else {
+        guard var urlComponents = URLComponents(string: baseAPIAddress) else {
             return nil
         }
         let latitude = NSNumber(value: location.coordinate.latitude)
@@ -46,7 +46,12 @@ class URLConfigurator: NSObject {
             urlComponents.queryItems?.append(URLQueryItem(name: "units", value: units.rawValue))
         }
         return urlComponents.url
-
+    }
+    
+    func createWeatherImageURL(imageName: String) -> URL? {
+        let imageAddress = String(format: "https://openweathermap.org/img/w/%@.png", imageName)
+        
+        return URL(string: imageAddress)
     }
     
 }
